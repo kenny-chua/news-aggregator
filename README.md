@@ -1,2 +1,3 @@
-# news-aggregator
+# PDM News Aggregator
+
 PDM News Aggregator
