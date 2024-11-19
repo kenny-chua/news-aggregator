@@ -1,7 +1,8 @@
-from urllib.parse import urlencode
-import requests
-from collections import namedtuple
 import os
+from collections import namedtuple
+from urllib.parse import urlencode
+
+import requests
 
 
 # Define a named tuple for top headlines
