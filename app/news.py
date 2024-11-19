@@ -27,7 +27,11 @@ class TopHeadline(SQLModel, table=True):
     url: str
     url_to_image: Optional[str] = Field(default=None)
     published_at: str
+    summary: Optional[str] = Field(default=None)
     content: Optional[str] = Field(default=None)
+    sentiment: Optional[str] = Field(default=None)
+    bias: Optional[str] = Field(default=None)
+
 
 TOPHEADLINES_URL = "https://newsapi.org/v2/top-headlines"
 
@@ -82,6 +86,7 @@ def create_db():
     # Get raw headlines as named tuples
     raw_headlines = get_top_headlines()
     insert_headlines_into_db(engine, raw_headlines)
+
 
 if __name__ == "__main__":
     create_db()
