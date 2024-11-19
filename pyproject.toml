@@ -10,4 +10,5 @@ dependencies = [
     "newspaper3k>=0.2.8",
     "pandas>=2.2.3",
     "requests>=2.32.3",
+    "sqlmodel>=0.0.22",
 ]
