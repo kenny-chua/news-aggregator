@@ -1,5 +1,4 @@
 import os
-from typing import List
 from urllib.parse import urlencode
 import requests
 from sqlmodel import SQLModel, create_engine, Session
@@ -12,7 +11,7 @@ load_dotenv()
 
 NEWSAPI_TOPHEADLINES = "https://newsapi.org/v2/top-headlines"
 
-def get_top_headlines(country="us", language="en") -> List[RawHeadline]:
+def get_top_headlines(country="us", language="en") -> list[RawHeadline]:
     api_key = os.getenv("NEWSAPI_API_KEY")
     top_headlines_params = {"country": country, "language": language, "apiKey": api_key}
     endpoint = f"{NEWSAPI_TOPHEADLINES}?{urlencode(top_headlines_params)}"
@@ -47,7 +46,7 @@ def create_db_and_tables(engine):
     SQLModel.metadata.create_all(engine)
 
 
-def create_db_with_raw_headlines(engine, raw_headlines: List[RawHeadline]):
+def create_db_with_raw_headlines(engine, raw_headlines: list[RawHeadline]):
     with Session(engine) as session:
         # Convert named tuples to SQLModel objects and add to the session
         for raw_headline in raw_headlines:
