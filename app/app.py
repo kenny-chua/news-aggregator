@@ -5,6 +5,7 @@ from sqlmodel import SQLModel, create_engine, Session
 from models import RawHeadline, TopHeadline
 from processor import get_article_text_and_insert
 from dotenv import load_dotenv
+from sentiment import sentiment_analysis
 
 load_dotenv()
 
@@ -59,6 +60,7 @@ def main():
     raw_headlines = get_top_headlines()
     create_db_with_raw_headlines(engine, raw_headlines)
     get_article_text_and_insert(engine)
+    sentiment_analysis(engine)
 
 
 if __name__ == "__main__":
