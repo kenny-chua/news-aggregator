@@ -12,7 +12,7 @@ def clean_malformed_escaped_url(url: str) -> str:
     url = url.replace("\\\\u003d", "=")
     return url
 
-def scrape_with_playwright(url):
+def scrape_with_playwright(url: str):
     with sync_playwright() as p:
         with p.chromium.launch() as browser:
             context = browser.new_context()
@@ -21,6 +21,7 @@ def scrape_with_playwright(url):
             page.goto(url, wait_until="domcontentloaded", timeout=PLAYWRIGHT_TIMEOUT_MILLISECONDS)
             time.sleep(PYSTD_TIME_SECONDS) # Allow the javascript to render
             content = page.content()
+    
     article = newspaper.article(url, input_html=content, language='en')
     return article
 
@@ -31,20 +32,24 @@ def get_article_text_and_insert(engine):
     
         for content in contents:
             try:
+                # Clean up URL and Scrape
                 content.url = clean_malformed_escaped_url(content.url)
                 article = scrape_with_playwright(content.url)
-                content.content = article.text
+                
+                # Update or delete row based on scrape result
+                if article.text:
+                    content.content = article.text
+                    session.add(content)
+                else:
+                    print(f"I couldn't scrape this {content.url}")
+                    session.delete(content)
+
+                session.commit()
+                print(f"Content commited for URL: {content.url}")
+            
             except Exception as e:
                 if "403" in str(e):
                     content.content = "Paywalled"
-            finally:
-                session.add(content)
-                try:
-                    session.commit()
-                    print(f"Content committed for URL: {content.url}")
-                except Exception as commit_error:
-                    print(f"Error during commit for {content.url}: {commit_error}")
-                    session.rollback()
-
-
-
+                else:
+                    content.content = f"Error: {e}"
+                

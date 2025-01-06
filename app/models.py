@@ -18,7 +18,7 @@ class RawHeadline(NamedTuple):
 class TopHeadline(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     source_id: Optional[str] = Field(default=None)
-    url: str
+    url: str = Field(unique=True)
     content: Optional[str] = Field(default=None)
     source_name: Optional[str] = Field(default=None)
     author: Optional[str] = Field(default=None)
