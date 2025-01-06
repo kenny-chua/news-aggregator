@@ -11,6 +11,7 @@ load_dotenv()
 
 NEWSAPI_TOPHEADLINES = "https://newsapi.org/v2/top-headlines"
 
+
 def get_top_headlines(country="us", language="en") -> list[RawHeadline]:
     api_key = os.getenv("NEWSAPI_API_KEY")
     top_headlines_params = {"country": country, "language": language, "apiKey": api_key}
@@ -30,7 +31,8 @@ def get_top_headlines(country="us", language="en") -> list[RawHeadline]:
             url_to_image=article.get("urlToImage"),
             published_at=article.get("publishedAt"),
         )
-        for article in articles  if article.get("url")
+        for article in articles
+        if article.get("url")
         if article.get("url") and "removed.com" not in article.get("url") and "washingtonpost" not in article.get("url")
     ]
     return raw_headlines
