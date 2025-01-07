@@ -27,4 +27,5 @@ class TopHeadline(SQLModel, table=True):
     url_to_image: Optional[str] = Field(default=None)
     published_at: str
     sentiment: Optional[str] = Field(default=None)
+    political_classification: Optional[str] = Field(default=None)
     bias: Optional[str] = Field(default=None)
