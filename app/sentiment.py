@@ -1,14 +1,16 @@
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 from sqlalchemy.sql import and_
 from sqlmodel import Session, select
-from models import TopHeadline
 from textblob import TextBlob
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
+
+from models import TopHeadline
 
 SENTIMENT_SQL = select(TopHeadline).where(TopHeadline.sentiment.is_(None))
 PREFILTER_SQL = select(TopHeadline).where(TopHeadline.political_classification.is_(None))
 BIAS_SQL = select(TopHeadline).where(
     and_(TopHeadline.bias.is_(None), TopHeadline.political_classification.is_not(None))
 )
+
 
 # Helper
 def classify_sentiment(polarity):
@@ -18,6 +20,7 @@ def classify_sentiment(polarity):
         return "neutral"
     else:
         return "positive"
+
 
 # Positive Negative Sentiment Analysis
 def sentiment_analysis(engine):

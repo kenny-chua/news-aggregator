@@ -1,9 +1,12 @@
-from sqlmodel import Session, select
-from sqlalchemy.exc import IntegrityError
-from models import TopHeadline
-from playwright.sync_api import sync_playwright
 import time
 import newspaper
+
+from playwright.sync_api import sync_playwright
+from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, select
+
+from models import TopHeadline
+
 
 PLAYWRIGHT_TIMEOUT_MILLISECONDS = 60000
 PYSTD_TIME_SECONDS = 3
@@ -25,13 +28,13 @@ def scrape_with_playwright(url: str):
                 page = context.new_page()
                 response = page.goto(url, wait_until="domcontentloaded", timeout=PLAYWRIGHT_TIMEOUT_MILLISECONDS)
                 time.sleep(PYSTD_TIME_SECONDS)  # Allow the javascript to render
-                
+
                 # Check for paywall (common 403 or other indicators)
                 if response and response.status == 403:
                     raise PermissionError("Paywall detected.")
-                
+
                 content = page.content()
-        
+
         # Use newspaper4k to process the scraped HTML
         article = newspaper.article(url, input_html=content, language="en")
         return article
@@ -73,4 +76,3 @@ def get_article_text_and_insert(engine):
             except IntegrityError as ie:
                 session.rollback()
                 print(f"Skipping {content.title}. Already exists. Error: {ie}")
-                

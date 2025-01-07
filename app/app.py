@@ -1,11 +1,14 @@
 import os
+
+from dotenv import load_dotenv
+from sqlmodel import SQLModel, Session, create_engine
 from urllib.parse import urlencode
 import requests
-from sqlmodel import SQLModel, create_engine, Session
+
 from models import RawHeadline, TopHeadline
 from processor import get_article_text_and_insert
-from dotenv import load_dotenv
-from sentiment import sentiment_analysis, prefilter_political_articles, classify_political_bias
+from sentiment import classify_political_bias, prefilter_political_articles, sentiment_analysis
+
 
 load_dotenv()
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
