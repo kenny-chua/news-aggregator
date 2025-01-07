@@ -27,7 +27,7 @@ def sentiment_analysis(engine):
             polarity = TextBlob(row.content).sentiment.polarity
             row.sentiment = classify_sentiment(polarity)
         session.commit()
-        print(f"This article has an overall {sentiment} sentiment")
+        print(f"This article has an overall {row.sentiment} sentiment")
 
 
 # Pre-filter for political relevance
@@ -61,3 +61,4 @@ def classify_political_bias(engine):
             score = result[0]["score"]
             row.bias = f"{label} ({score:.2f})"
             print(f"Article '{row.title}' leans {label} with confidence score of {score:.2f}")
+        session.commit()

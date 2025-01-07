@@ -56,7 +56,6 @@ def get_article_text_and_insert(engine):
 
                 if article and article.text:
                     content.content = article.text
-                    session.add(content)
                     print(f"Content for {content.title} was added.")
                 else:
                     print(f"I couldn't scrape this {content.title}")
@@ -74,24 +73,4 @@ def get_article_text_and_insert(engine):
             except IntegrityError as ie:
                 session.rollback()
                 print(f"Skipping {content.title}. Already exists. Error: {ie}")
-
-                if article == "Paywalled":
-                    content.content = "Paywalled"
-                    print(f"Paywalled content for '{content.title}', marking as paywalled.")
-                elif article and article.text:
-                    content.content = article.text
-                    print(f"Content for '{content.title}' was added.")
-                else:
-                    print(f"Unable to scrape content for '{content.title}', deleting row.")
-                    session.delete(content)
-
-                session.commit()
-                print(f"Content committed for URL: {content.url}")
-
-            except IntegrityError as ie:
-                session.rollback()
-                print(f"Skipping duplicate entry for '{content.title}'. Error: {ie}")
-
-            except Exception as e:
-                session.rollback()
-                print(f"An error occurred while processing '{content.title}'. Error: {e}")
+                
