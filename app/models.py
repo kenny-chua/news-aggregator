@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import Field, SQLModel
 from typing import NamedTuple, Optional
 
 
@@ -18,7 +18,7 @@ class RawHeadline(NamedTuple):
 class TopHeadline(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     source_id: Optional[str] = Field(default=None)
-    url: str
+    url: str = Field(unique=True)
     content: Optional[str] = Field(default=None)
     source_name: Optional[str] = Field(default=None)
     author: Optional[str] = Field(default=None)
@@ -27,4 +27,5 @@ class TopHeadline(SQLModel, table=True):
     url_to_image: Optional[str] = Field(default=None)
     published_at: str
     sentiment: Optional[str] = Field(default=None)
+    political_classification: Optional[str] = Field(default=None)
     bias: Optional[str] = Field(default=None)

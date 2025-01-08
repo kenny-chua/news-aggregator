@@ -17,4 +17,6 @@ dependencies = [
     "requests>=2.32.3",
     "sqlmodel>=0.0.22",
     "textblob>=0.18.0.post0",
+    "torch>=2.5.1",
+    "transformers>=4.47.1",
 ]
