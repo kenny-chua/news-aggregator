@@ -1,15 +1,19 @@
 import os
+
+from dotenv import load_dotenv
+from sqlmodel import SQLModel, Session, create_engine
 from urllib.parse import urlencode
 import requests
-from sqlmodel import SQLModel, create_engine, Session
+
 from models import RawHeadline, TopHeadline
 from processor import get_article_text_and_insert
-from dotenv import load_dotenv
-from sentiment import sentiment_analysis
+from sentiment import classify_political_bias, prefilter_political_articles, sentiment_analysis
+
 
 load_dotenv()
-
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 NEWSAPI_TOPHEADLINES = "https://newsapi.org/v2/top-headlines"
+BLACKLISTED_URLS = ["removed.com", "washingtonpost"]
 
 
 def get_top_headlines(country="us", language="en") -> list[RawHeadline]:
@@ -32,8 +36,7 @@ def get_top_headlines(country="us", language="en") -> list[RawHeadline]:
             published_at=article.get("publishedAt"),
         )
         for article in articles
-        if article.get("url")
-        if article.get("url") and "removed.com" not in article.get("url") and "washingtonpost" not in article.get("url")
+        if article.get("url") and not any(blacklisted in article["url"] for blacklisted in BLACKLISTED_URLS)
     ]
     return raw_headlines
 
@@ -63,6 +66,8 @@ def main():
     create_db_with_raw_headlines(engine, raw_headlines)
     get_article_text_and_insert(engine)
     sentiment_analysis(engine)
+    prefilter_political_articles(engine)
+    classify_political_bias(engine)
 
 
 if __name__ == "__main__":
