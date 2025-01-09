@@ -72,7 +72,3 @@ def get_article_text_and_insert(engine):
                     content.content = "Paywalled"
                 else:
                     content.content = f"Error: {e}"
-
-            except IntegrityError as ie:
-                session.rollback()
-                print(f"Skipping {content.title}. Already exists. Error: {ie}")
