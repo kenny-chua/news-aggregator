@@ -1,13 +1,13 @@
 import os
 
 from dotenv import load_dotenv
-from sqlmodel import SQLModel, Session, create_engine
+from sqlmodel import SQLModel, Session, create_engine, select
 from urllib.parse import urlencode
 import requests
 
 from models import RawHeadline, TopHeadline
 from processor import get_article_text_and_insert
-from sentiment import classify_political_bias, prefilter_political_articles, sentiment_analysis
+from sentiment import classify_political_bias_harshal_Bert, prefilter_political_articles, sentiment_analysis
 
 load_dotenv()
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -40,7 +40,7 @@ def get_top_headlines(country="us", language="en") -> list[RawHeadline]:
     return raw_headlines
 
 
-sqlite_file_name = "newslist.db"
+sqlite_file_name = os.getenv("DB")
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 engine = create_engine(sqlite_url)
@@ -54,6 +54,10 @@ def create_db_with_raw_headlines(engine, raw_headlines: list[RawHeadline]):
     with Session(engine) as session:
         # Convert named tuples to SQLModel objects and add to the session
         for raw_headline in raw_headlines:
+            existing_headline = session.exec(select(TopHeadline).where(TopHeadline.url == raw_headline.url)
+                ).first()
+            if existing_headline:
+                continue
             db_headline = TopHeadline(**raw_headline._asdict())
             session.add(db_headline)
         session.commit()
@@ -66,7 +70,7 @@ def main():
     get_article_text_and_insert(engine)
     sentiment_analysis(engine)
     prefilter_political_articles(engine)
-    classify_political_bias(engine)
+    classify_political_bias_harshal_Bert(engine)
 
 
 if __name__ == "__main__":
