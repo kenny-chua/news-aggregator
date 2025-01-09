@@ -2,7 +2,6 @@ import time
 import newspaper
 
 from playwright.sync_api import sync_playwright
-from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session, select
 
 from models import TopHeadline
