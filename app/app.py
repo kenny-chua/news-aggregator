@@ -53,10 +53,13 @@ def create_db_and_tables(engine):
 def create_db_with_raw_headlines(engine, raw_headlines: list[RawHeadline]):
     with Session(engine) as session:
         # Use `scalars()` to directly extract scalar values (like URLs), style of SQL Alchemy 2.0
-        # existing_headlines = {row.url for row in session.execu(select(TopHeadline.url))}
-        existing_headlines = set(session.execute(select(TopHeadline.url)).scalars())
+        # existing_headlines = {row.url for row in session.exec(select(TopHeadline.url))}
+        # existing_headlines = set(session.execute(select(TopHeadline.url)).scalars())
+        existing_headlines = {row for row in session.exec(select(TopHeadline.url))}
+        # existing_headlines = {row.url for row in session.exec(select(TopHeadline.url)).all()}
         for raw_headline in raw_headlines:
-            if raw_headline in existing_headlines:
+            if raw_headline.url in existing_headlines:
+            # if raw_headline in existing_headlines:
                 continue
             db_headline = TopHeadline(**raw_headline._asdict())
             session.add(db_headline)
