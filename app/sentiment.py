@@ -9,6 +9,7 @@ SENTIMENT_SQL = select(TopHeadline).where(TopHeadline.sentiment.is_(None))
 PREFILTER_SQL = select(TopHeadline).where(TopHeadline.political_classification.is_(None))
 BIAS_SQL = select(TopHeadline).where(TopHeadline.bias.is_(None))
 
+
 # Helper
 def classify_sentiment(polarity):
     if polarity < 0:
@@ -28,7 +29,6 @@ def sentiment_analysis(engine):
             row.sentiment = classify_sentiment(polarity)
             print(f"This article has an overall {row.sentiment} sentiment")
         session.commit()
-        
 
 
 # Pre-filter for political relevance

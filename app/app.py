@@ -52,11 +52,10 @@ def create_db_and_tables(engine):
 
 def create_db_with_raw_headlines(engine, raw_headlines: list[RawHeadline]):
     with Session(engine) as session:
-        # Convert named tuples to SQLModel objects and add to the session
+        # Create a set of all existing URLs before the loop.
+        existing_headlines = {row.url for row in session.execu(select(TopHeadline.url))}
         for raw_headline in raw_headlines:
-            existing_headline = session.exec(select(TopHeadline).where(TopHeadline.url == raw_headline.url)
-                ).first()
-            if existing_headline:
+            if raw_headline in existing_headlines:
                 continue
             db_headline = TopHeadline(**raw_headline._asdict())
             session.add(db_headline)
