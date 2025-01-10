@@ -52,8 +52,9 @@ def create_db_and_tables(engine):
 
 def create_db_with_raw_headlines(engine, raw_headlines: list[RawHeadline]):
     with Session(engine) as session:
-        # Create a set of all existing URLs before the loop.
-        existing_headlines = {row.url for row in session.execu(select(TopHeadline.url))}
+        # Use `scalars()` to directly extract scalar values (like URLs), style of SQL Alchemy 2.0
+        # existing_headlines = {row.url for row in session.execu(select(TopHeadline.url))}
+        existing_headlines = set(session.execute(select(TopHeadline.url)).scalars())
         for raw_headline in raw_headlines:
             if raw_headline in existing_headlines:
                 continue
