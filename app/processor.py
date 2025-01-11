@@ -1,4 +1,5 @@
 import time
+from log import setup_logger
 import newspaper
 
 from playwright.sync_api import sync_playwright
@@ -7,13 +8,15 @@ from sqlalchemy.exc import IntegrityError
 
 from models import TopHeadline
 
+logger = setup_logger(__name__)
+
 
 PLAYWRIGHT_TIMEOUT_MILLISECONDS = 60000
 PYSTD_TIME_SECONDS = 3
 
 
 def clean_malformed_escaped_url(url: str) -> str:
-    print(url)
+    logger.debug(f"Cleaning URL: {url}")
     url = url.replace("\\\\u003d", "=")
     return url
 
@@ -21,6 +24,7 @@ def clean_malformed_escaped_url(url: str) -> str:
 def scrape_with_playwright(url: str):
     """Scrape content of a webpage using Playwright"""
     try:
+        logger.info(f"Scraping URL: {url}")
         with sync_playwright() as p:
             with p.chromium.launch() as browser:
                 context = browser.new_context()
@@ -35,7 +39,7 @@ def scrape_with_playwright(url: str):
 
                 # Check for paywall (common 403 or other indicators)
                 if response and response.status == 403:
-                    print(f"Paywall detected for URL: {url}")
+                    logger.warning(f"Paywall detected for URL: {url}")
                     return None
 
                 content = page.content()
@@ -44,7 +48,7 @@ def scrape_with_playwright(url: str):
         article = newspaper.article(url, input_html=content, language="en")
         return article
     except Exception as e:
-        print(f"Error scraping URL: {url}. Error: {e}")
+        logger.error(f"Error scraping URL: {url}. Error: {e}")
         return None
 
 
@@ -56,24 +60,21 @@ def get_article_text_and_insert(engine):
         ).all()
         for content in contents:
             try:
+                logger.info(f"Processing article for URL: {content.url}")
                 article = scrape_with_playwright(content.url)
                 if article is None:
-                    print(
-                        f"DEBUG: Article object could not be created for URL: {content.url}"
-                    )
+                    logger.debug(f"Article could not be created for URL: {content.url}")
                     session.delete(content)
                 elif not article.text:
-                    print(
-                        f"DEBUG: Article object created, but text is empty for URL: {content.url}"
-                    )
+                    logger.debug(f"Article text is empty for URL: {content.url}")
                     session.delete(content)
                 else:
                     content.content = article.text
-                    print(f"DEBUG: Content successfully scraped for {content.title}")
+                    logger.info(f"Content successfully scraped for: {content.title}")
 
                 session.commit()
-                print(f"Content commited for URL: {content.url}")
+                logger.info(f"Content committed for URL: {content.url}")
             except IntegrityError:
                 session.rollback()
-                print(f"DEBUG: Unknown IntegrityError for URL: {content.url}")
+                logger.warning(f"IntegrityError for URL: {content.url}")
                 continue
