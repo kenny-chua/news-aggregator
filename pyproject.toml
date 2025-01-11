@@ -13,10 +13,17 @@ dependencies = [
     "newspaper4k>=0.9.3.1",
     "pandas>=2.2.3",
     "playwright>=1.49.0",
+    "pre-commit>=4.0.1",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
+    "sqlalchemy>=2.0.36",
     "sqlmodel>=0.0.22",
     "textblob>=0.18.0.post0",
     "torch>=2.5.1",
     "transformers>=4.47.1",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.1",
 ]
