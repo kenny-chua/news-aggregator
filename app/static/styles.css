@@ -1,0 +1,90 @@
+/* Default light mode */
+:root {
+    --bg-color: #ffffff; /* Background color */
+    --text-color: #000000; /* Default text color */
+    --card-bg-color: #f8f9fa; /* Background color for cards */
+    --button-bg-color: #007bff; /* Primary button background */
+    --button-text-color: #ffffff; /* Primary button text color */
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --bg-color: #121212; /* Dark background */
+    --text-color: #ffffff; /* Light text color */
+    --card-bg-color: #1e1e1e; /* Dark card background */
+    --button-bg-color: #1a73e8; /* Button background for dark mode */
+    --button-text-color: #ffffff; /* Button text for dark mode */
+}
+
+/* Apply variables globally */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s; /* Smooth theme transition */
+}
+
+/* Navbar styles */
+.navbar {
+    padding: 1rem;
+}
+
+.navbar .navbar-brand {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.5rem;
+}
+
+/* Card styles */
+.card {
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+/* Button styles */
+.btn {
+    background-color: var(--button-bg-color);
+    color: var(--button-text-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 3px;
+    font-size: 1rem;
+    transition: background-color 0.3s, color 0.3s, opacity 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9; /* Slight transparency on hover */
+}
+
+/* Additional styles for alignment and spacing */
+.text-center {
+    text-align: center;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
+}
+
+.py-5 {
+    padding: 3rem 0;
+}
+
+.bias-moderate {
+    color: #6c757d; /* Gray for light mode */
+}
+
+/* Improve visibility in dark mode */
+[data-theme="dark"] .bias-moderate {
+    color: #d3d3d3; /* Light gray for dark mode */
+}
