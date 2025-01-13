@@ -1,6 +1,6 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
 import spacy
+from sklearn.cluster import KMeans
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Load spaCy model for sentence tokenization
 nlp = spacy.load("en_core_web_sm")

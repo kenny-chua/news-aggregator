@@ -37,8 +37,10 @@
         const currentTheme = localStorage.getItem("theme") || "light";
         document.documentElement.setAttribute("data-theme", currentTheme);
 
-        // Update the toggle button text based on the current theme
-        themeToggle.textContent = currentTheme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode";
+        // Update the toggle button icon and tooltip based on the current theme
+        themeToggle.innerHTML = currentTheme === "dark"
+            ? '<i class="fas fa-sun"></i>'
+            : '<i class="fas fa-moon"></i>';
 
         // Add event listener to toggle the theme
         themeToggle.addEventListener("click", function () {
