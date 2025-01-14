@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="jumbotron text-center bg-primary text-white py-5">
+    <div class="container">
+        <h1 class="display-4">Welcome to News Aggregator</h1>
+        <p class="lead">Stay informed with real-time news analysis: sentiment, political stance, and bias ratings.</p>
+        <a class="btn btn-light btn-lg" href="#news-list" role="button">View Latest News</a>
+    </div>
+</div>
+
+<!-- News List Section -->
+<h1 class="text-center my-4">Latest Headlines</h1>
+<div id="news-list">
+    {% for headline in headlines %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">{{ headline.title }}</h5>
+            <p class="card-text">
+                <strong>Published at:</strong> {{ headline.published_at|format_date }}<br>
+                <strong>Source:</strong> {{ headline.source_name }}
+            </p>
+            <a href="{{ url_for('routes.detail', headline_id=headline.id) }}" class="btn btn-primary">Read More</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<!-- Load More Button -->
+<div class="text-center mt-4">
+    <button id="load-more" class="btn btn-secondary">Load More Headlines</button>
+</div>
+{% endblock %}
