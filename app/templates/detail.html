@@ -1,61 +1,92 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>{{ headline.title }}</h2>
+{% if headline %}
+    <h2>{{ headline.title }}</h2>
 
-<!-- Published Date -->
-<p><strong>Published at:</strong> {{ headline.published_at | format_date }}</p>
+    <!-- Published Date -->
+    <p>
+        <strong>Published at:</strong>
+        {{ headline.published_at | format_date if headline.published_at else "Not available" }}
+    </p>
 
-<!-- Source -->
-<p><strong>Source:</strong> {{ headline.source_name }}</p>
+    <!-- Source -->
+    <p>
+        <strong>Source:</strong>
+        {{ headline.source_name if headline.source_name else "Not available" }}
+    </p>
 
-<!-- URL -->
-<p><strong>URL:</strong> <a href="{{ headline.url }}" target="_blank">{{ headline.url }}</a></p>
+    <!-- URL -->
+    <p>
+        <strong>URL:</strong>
+        {% if headline.url %}
+            <a href="{{ headline.url }}" target="_blank">{{ headline.url }}</a>
+        {% else %}
+            Not available
+        {% endif %}
+    </p>
 
-<!-- Author -->
-<p><strong>Author:</strong> {{ headline.author }}</p>
+    <!-- Author -->
+    <p>
+        <strong>Author:</strong>
+        {{ headline.author if headline.author else "Not available" }}
+    </p>
 
-<!-- Sentiment -->
-<p>
-    <strong>Sentiment:</strong>
-    {% if headline.sentiment == "positive" %}
-        <span class="text-success">Positive 👍</span>
-    {% elif headline.sentiment == "negative" %}
-        <span class="text-danger">Negative 👎</span>
-    {% else %}
-        <span class="text-muted">Neutral 🤷</span>
-    {% endif %}
-</p>
+    <!-- Sentiment -->
+    <p>
+        <strong>Sentiment:</strong>
+        {% if headline.sentiment == "positive" %}
+            <span class="text-success">Positive 👍</span>
+        {% elif headline.sentiment == "negative" %}
+            <span class="text-danger">Negative 👎</span>
+        {% else %}
+            <span class="text-neutral">No Sentiment 🤷</span>
+        {% endif %}
+    </p>
 
-<!-- Political Class -->
-<p>
-    <strong>Political Class:</strong>
-    {% if headline.political_class == "not_politics" %}
-        <span class="badge bg-secondary">Non-Political</span>
-    {% else %}
-        <span class="badge bg-primary">Political</span>
-    {% endif %}
-</p>
+    <!-- Political Class -->
+    <p>
+        <strong>Political Class:</strong>
+        {% if headline.political_class == "not_politics" %}
+            <span class="badge bg-secondary">Non-Political</span>
+        {% elif headline.political_class == "political" %}
+            <span class="badge bg-primary">Political</span>
+        {% else %}
+            <span class="text-neutral">Unknown Political Class</span>
+        {% endif %}
+    </p>
 
-<!-- Bias -->
-<p>
-    <strong>Bias:</strong>
-    {% if "liberal" in headline.bias %}
-        <span class="text-primary">Liberal</span>
-    {% elif "moderate" in headline.bias %}
-        <span class="bias-moderate">Moderate</span>
-    {% elif "conservative" in headline.bias %}
-        <span class="text-danger">Conservative</span>
-    {% endif %}
-    ({{ headline.bias.split("(")[1] | replace(")", "") }})
-</p>
+    <!-- Bias -->
+    <p>
+        <strong>Bias:</strong>
+        {% if headline.bias %}
+            {% if "liberal" in headline.bias %}
+                <span class="text-primary">Liberal</span>
+            {% elif "moderate" in headline.bias %}
+                <span class="bias-moderate">Moderate</span>
+            {% elif "conservative" in headline.bias %}
+                <span class="text-danger">Conservative</span>
+            {% else %}
+                <span class="text-neutral">Unknown Bias</span>
+            {% endif %}
+            {% if "(" in headline.bias and ")" in headline.bias %}
+                ({{ headline.bias.split("(")[1] | replace(")", "") }})
+            {% endif %}
+        {% else %}
+            <span class="text-neutral">Bias information not available</span>
+        {% endif %}
+    </p>
 
-<!-- Article Content -->
-<article>
-    <h3>Content:</h3>
-    <p>{{ headline.content | safe }}</p>
-</article>
+    <!-- Article Content -->
+    <article>
+        <h3>Content:</h3>
+        <p>{{ headline.content | safe if headline.content else "Content not available." }}</p>
+    </article>
 
-<!-- Back to Home Link -->
-<a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+    <!-- Back to Home Link -->
+    <a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+{% else %}
+    <p class="text-muted">The news is not yet available. Please wait while we fetch the latest headlines.</p>
+    <a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+{% endif %}
 {% endblock %}

@@ -92,11 +92,11 @@ Open your browser and navigate to `http://127.0.0.1:5000` to access the applicat
 
 ### Homepage
 
-![Home Page](assets/homepage.jpg)
+![Home Page](images/homepage.jpg)
 
 ### Article
 
-![Article](assets/article.jpg)
+![Article](images/article.jpg)
 
 ## Acknowledgements
 

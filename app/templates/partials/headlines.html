@@ -3,7 +3,7 @@
     <div class="card-body">
         <h5 class="card-title">{{ headline.title }}</h5>
         <p class="card-text">
-            <strong>Published at:</strong> {{ headline.published_at }}<br>
+            <strong>Published at:</strong> {{ headline.published_at|format_date }}<br>
             <strong>Source:</strong> {{ headline.source_name }}
         </p>
         <a href="{{ url_for('routes.detail', headline_id=headline.id) }}" class="btn btn-primary">Read More</a>

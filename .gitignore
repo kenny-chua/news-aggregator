@@ -1,5 +1,6 @@
 # User Specifc Ignores
-notes*
+/notebooks/
+/assets/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -64,6 +65,7 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 *.db
+db/
 
 # Flask stuff:
 instance/
