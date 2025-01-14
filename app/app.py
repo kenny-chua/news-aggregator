@@ -1,7 +1,7 @@
 import os
 from log import setup_logger
+from config import sqlite_url, NEWSAPI_TOPHEADLINES, BLACKLISTED_URLS
 
-from dotenv import load_dotenv
 from sqlmodel import SQLModel, Session, create_engine, select
 from urllib.parse import urlencode
 import requests
@@ -17,14 +17,6 @@ from sentiment import (
 # Setup logger
 logger = setup_logger(__name__)
 
-
-# Constants and global configurations
-load_dotenv()
-os.environ["TOKENIZERS_PARALLELISM"] = "false"
-NEWSAPI_TOPHEADLINES = "https://newsapi.org/v2/top-headlines"
-BLACKLISTED_URLS = ["removed.com", "washingtonpost"]
-sqlite_file_name = os.getenv("DB")
-sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 # Global resource: SQL database engine
 engine = create_engine(sqlite_url)

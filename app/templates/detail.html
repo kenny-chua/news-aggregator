@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ headline.title }}</h2>
+
+<!-- Published Date -->
+<p><strong>Published at:</strong> {{ headline.published_at | format_date }}</p>
+
+<!-- Source -->
+<p><strong>Source:</strong> {{ headline.source_name }}</p>
+
+<!-- URL -->
+<p><strong>URL:</strong> <a href="{{ headline.url }}" target="_blank">{{ headline.url }}</a></p>
+
+<!-- Author -->
+<p><strong>Author:</strong> {{ headline.author }}</p>
+
+<!-- Sentiment -->
+<p>
+    <strong>Sentiment:</strong>
+    {% if headline.sentiment == "positive" %}
+        <span class="text-success">Positive 👍</span>
+    {% elif headline.sentiment == "negative" %}
+        <span class="text-danger">Negative 👎</span>
+    {% else %}
+        <span class="text-muted">Neutral 🤷</span>
+    {% endif %}
+</p>
+
+<!-- Political Class -->
+<p>
+    <strong>Political Class:</strong>
+    {% if headline.political_class == "not_politics" %}
+        <span class="badge bg-secondary">Non-Political</span>
+    {% else %}
+        <span class="badge bg-primary">Political</span>
+    {% endif %}
+</p>
+
+<!-- Bias -->
+<p>
+    <strong>Bias:</strong>
+    {% if "liberal" in headline.bias %}
+        <span class="text-primary">Liberal</span>
+    {% elif "moderate" in headline.bias %}
+        <span class="bias-moderate">Moderate</span>
+    {% elif "conservative" in headline.bias %}
+        <span class="text-danger">Conservative</span>
+    {% endif %}
+    ({{ headline.bias.split("(")[1] | replace(")", "") }})
+</p>
+
+<!-- Article Content -->
+<article>
+    <h3>Content:</h3>
+    <p>{{ headline.content | safe }}</p>
+</article>
+
+<!-- Back to Home Link -->
+<a href="/" class="btn btn-secondary mt-3">Back to Home</a>
+{% endblock %}
