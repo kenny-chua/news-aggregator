@@ -1,12 +1,12 @@
-from log import setup_logger
+import torch
 from sqlmodel import Session, select
 from textblob import TextBlob
 from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
-import torch
 
-from models import TopHeadline
+from app.log import LoggerSingleton
+from app.models import TopHeadline
 
-logger = setup_logger(__name__)
+logger = LoggerSingleton.get_logger(__name__)
 
 SENTIMENT_SQL = select(TopHeadline).where(TopHeadline.sentiment.is_(None))
 PREFILTER_SQL = select(TopHeadline).where(TopHeadline.political_class.is_(None))
