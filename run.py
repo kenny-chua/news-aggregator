@@ -1,7 +1,13 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 
+from app.app import create_db_and_tables, engine
+from app.app import main as run_scraper
+from app.log import LoggerSingleton
 from app.routes import routes
 from app.utils import format_date
+
+logger = LoggerSingleton.get_logger(__name__)
 
 
 def create_app():
@@ -14,6 +20,27 @@ def create_app():
     return app
 
 
+# Function to schedule the scraper
+def schedule_scraper():
+    """Run the scraping task."""
+    try:
+        logger.info("Running the scraper task...")
+        run_scraper()  # Call the `main()` function from app.py
+        logger.info("Scraper task completed succesfully.")
+    except Exception as e:
+        logger.error(f"Error running the scraper: {e}", exc_info=True)
+
+
+# Initialize and start the scheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    schedule_scraper, "interval", days=1
+)  # Schedule the scraper to run once a day
+scheduler.start()
+
+
 if __name__ == "__main__":
+    create_db_and_tables(engine)
     app = create_app()
+    schedule_scraper()
     app.run(host="0.0.0.0", port=5001, debug=True)

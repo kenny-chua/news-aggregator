@@ -1,21 +1,20 @@
 import os
-from log import setup_logger
-from config import sqlite_url, NEWSAPI_TOPHEADLINES, BLACKLISTED_URLS
-
-from sqlmodel import SQLModel, Session, create_engine, select
 from urllib.parse import urlencode
-import requests
 
-from models import RawHeadline, TopHeadline
-from processor import clean_malformed_escaped_url, get_article_text_and_insert
-from sentiment import (
+import requests
+from sqlmodel import Session, SQLModel, create_engine, select
+
+from app.config import BLACKLISTED_URLS, NEWSAPI_TOPHEADLINES, sqlite_url
+from app.log import LoggerSingleton
+from app.models import RawHeadline, TopHeadline
+from app.processor import clean_malformed_escaped_url, get_article_text_and_insert
+from app.sentiment import (
     classify_political_bias_harshal_Bert,
     prefilter_political_articles,
     sentiment_analysis,
 )
 
-# Setup logger
-logger = setup_logger(__name__)
+logger = LoggerSingleton.get_logger(__name__)
 
 
 # Global resource: SQL database engine
