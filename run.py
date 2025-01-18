@@ -34,7 +34,7 @@ def schedule_scraper():
 # Initialize and start the scheduler
 scheduler = BackgroundScheduler()
 scheduler.add_job(
-    schedule_scraper, "interval", days=1
+    schedule_scraper, "interval", minutes=1
 )  # Schedule the scraper to run once a day
 scheduler.start()
 
@@ -42,5 +42,4 @@ scheduler.start()
 if __name__ == "__main__":
     create_db_and_tables(engine)
     app = create_app()
-    schedule_scraper()
     app.run(host="0.0.0.0", port=5001, debug=True)
