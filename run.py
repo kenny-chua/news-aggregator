@@ -1,6 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 
+from app.app import create_db_and_tables, engine
 from app.app import scrape_and_process as run_scraper
 from app.log import LoggerSingleton
 from app.routes import routes
@@ -11,6 +12,12 @@ logger = LoggerSingleton.get_logger(__name__)
 
 def create_app():
     app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
+
+    # Ensure the database and tables are created when the Flask app starts
+    @app.before_first_request
+    def initialize_database():
+        create_db_and_tables(engine)
+
     app.register_blueprint(routes)
 
     # Register the Jinja2 filter
