@@ -34,7 +34,7 @@ def schedule_scraper():
 # Initialize and start the scheduler
 scheduler = BackgroundScheduler()
 scheduler.add_job(
-    schedule_scraper, "interval", minutes=1
+    schedule_scraper, "interval", days=1
 )  # Schedule the scraper to run once a day
 scheduler.start()
 
