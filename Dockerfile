@@ -7,11 +7,12 @@ WORKDIR /app
 # Copy project files into the container
 COPY . /app
 
-# Install uv and dependencies
-RUN pip install uv
+# Install project dependencies from requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Expose port 5001 for the container
+# Expose port 5001 for the Flask app
 EXPOSE 5001
 
-# Command to run your app
-CMD ["uv", "run", "python", "run.py"]
+# Command to run your Flask app
+CMD ["python", "run.py"]

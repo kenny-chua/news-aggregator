@@ -1,8 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 
-from app.app import create_db_and_tables, engine
-from app.app import main as run_scraper
+from app.app import scrape_and_process as run_scraper
 from app.log import LoggerSingleton
 from app.routes import routes
 from app.utils import format_date
@@ -40,6 +39,6 @@ scheduler.start()
 
 
 if __name__ == "__main__":
-    create_db_and_tables(engine)
+    logger.info("Starting the Flask app with scheduler...")
     app = create_app()
     app.run(host="0.0.0.0", port=5001, debug=True)
