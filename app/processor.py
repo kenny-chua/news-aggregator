@@ -1,14 +1,14 @@
 import time
-from log import setup_logger
+
 import newspaper
-
 from playwright.sync_api import sync_playwright
-from sqlmodel import Session, select
 from sqlalchemy.exc import IntegrityError
+from sqlmodel import Session, select
 
-from models import TopHeadline
+from app.log import LoggerSingleton
+from app.models import TopHeadline
 
-logger = setup_logger(__name__)
+logger = LoggerSingleton.get_logger(__name__)
 
 
 PLAYWRIGHT_TIMEOUT_MILLISECONDS = 60000

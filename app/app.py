@@ -1,21 +1,20 @@
 import os
-from log import setup_logger
-from config import sqlite_url, NEWSAPI_TOPHEADLINES, BLACKLISTED_URLS
-
-from sqlmodel import SQLModel, Session, create_engine, select
 from urllib.parse import urlencode
-import requests
 
-from models import RawHeadline, TopHeadline
-from processor import clean_malformed_escaped_url, get_article_text_and_insert
-from sentiment import (
+import requests
+from sqlmodel import Session, SQLModel, create_engine, select
+
+from .config import BLACKLISTED_URLS, NEWSAPI_TOPHEADLINES, sqlite_url
+from .log import LoggerSingleton
+from .models import RawHeadline, TopHeadline
+from .processor import clean_malformed_escaped_url, get_article_text_and_insert
+from .sentiment import (
     classify_political_bias_harshal_Bert,
     prefilter_political_articles,
     sentiment_analysis,
 )
 
-# Setup logger
-logger = setup_logger(__name__)
+logger = LoggerSingleton.get_logger(__name__)
 
 
 # Global resource: SQL database engine
@@ -78,8 +77,8 @@ def create_db_with_raw_headlines(engine, raw_headlines: list[RawHeadline]) -> No
     logger.info("Raw headlines inserted successfully.")
 
 
-def main() -> None:
-    logger.info("Starting application")
+def scrape_and_process() -> None:
+    logger.info("Starting scraper pipeline")
     create_db_and_tables(engine)
     raw_headlines = get_raw_values_from_api()
     create_db_with_raw_headlines(engine, raw_headlines)
@@ -87,8 +86,8 @@ def main() -> None:
     sentiment_analysis(engine)
     prefilter_political_articles(engine)
     classify_political_bias_harshal_Bert(engine)
-    logger.info("Application finished")
+    logger.info("Scraper pipline finished")
 
 
 if __name__ == "__main__":
-    main()
+    scrape_and_process()
