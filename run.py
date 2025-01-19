@@ -10,13 +10,15 @@ from app.utils import format_date
 logger = LoggerSingleton.get_logger(__name__)
 
 
+def initialize_database():
+    create_db_and_tables(engine)
+
+
 def create_app():
     app = Flask(__name__, template_folder="app/templates", static_folder="app/static")
 
     # Ensure the database and tables are created when the Flask app starts
-    @app.before_first_request
-    def initialize_database():
-        create_db_and_tables(engine)
+    initialize_database()
 
     app.register_blueprint(routes)
 
@@ -26,26 +28,35 @@ def create_app():
     return app
 
 
-# Function to schedule the scraper
-def schedule_scraper():
-    """Run the scraping task."""
-    try:
-        logger.info("Running the scraper task...")
-        run_scraper()  # Call the `main()` function from app.py
-        logger.info("Scraper task completed succesfully.")
-    except Exception as e:
-        logger.error(f"Error running the scraper: {e}", exc_info=True)
+def start_scheduler(scheduler):
+    """Set up and start the scheduler."""
 
+    # Run the scraper immediately after the Flask app starts
+    def run_initial_scraper():
+        try:
+            logger.info("Running initial scraper task...")
+            run_scraper()
+            logger.info("Initial scraper task completed.")
+        except Exception as e:
+            logger.error(f"Error running the initial scraper: {e}", exc_info=True)
 
-# Initialize and start the scheduler
-scheduler = BackgroundScheduler()
-scheduler.add_job(
-    schedule_scraper, "interval", days=1
-)  # Schedule the scraper to run once a day
-scheduler.start()
+    # Add the initial scraper job to run immediately
+    scheduler.add_job(run_initial_scraper, "date", id="initial_scraper")
+
+    # Add the daily scraper job
+    scheduler.add_job(run_scraper, "interval", hours=24, id="daily_scraper")
+
+    scheduler.start()
+    logger.info("Scheduler started with initial and daily scraper jobs.")
 
 
 if __name__ == "__main__":
     logger.info("Starting the Flask app with scheduler...")
     app = create_app()
+
+    # Set up the scheduler
+    scheduler = BackgroundScheduler()
+    start_scheduler(scheduler)
+
+    # Run the Flask app
     app.run(host="0.0.0.0", port=5001, debug=True)
